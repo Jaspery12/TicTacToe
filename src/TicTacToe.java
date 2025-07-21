@@ -18,6 +18,7 @@ public class TicTacToe {
   String currentPlayer = playerX;
 
   boolean gameOver = false;
+  int turns = 0;
 
   public TicTacToe() {
     frame.setVisible(true);
@@ -59,6 +60,7 @@ public class TicTacToe {
             JButton box = (JButton) e.getSource(); //Type button as there is only buttons 
             if (box.getText() == ""){
               box.setText(currentPlayer);
+              turns += 1;
               checkWinner();
 
               if (!gameOver) {
@@ -80,7 +82,7 @@ public class TicTacToe {
           setWinner(board[r][i]);
         }
         gameOver = true;
-        exitAlert(currentPlayer);
+        winExitAlert(currentPlayer);
       }
     }
 
@@ -92,7 +94,7 @@ public class TicTacToe {
           setWinner(board[i][c]);
         }
         gameOver = true;
-        exitAlert(currentPlayer);
+        winExitAlert(currentPlayer);
       }
     }
 
@@ -103,7 +105,7 @@ public class TicTacToe {
         setWinner(board[i][i]);
       }
       gameOver = true;
-      exitAlert(currentPlayer);
+      winExitAlert(currentPlayer);
     }
 
     if (board[0][2].getText() == board[1][1].getText() &&
@@ -113,19 +115,33 @@ public class TicTacToe {
       setWinner(board[1][1]);
       setWinner(board[2][0]);
       gameOver = true;
-      exitAlert(currentPlayer);
+      winExitAlert(currentPlayer);
+    }
+
+    if (turns == 9){
+      for(int r=0; r<3; r++){
+        for(int c=0; c<3; c++){
+          setTie(board[r][c]);
+        }
+      }
+      JOptionPane.showMessageDialog(null, "It's a tie!", "Press OK to exit", JOptionPane.INFORMATION_MESSAGE);
+      System.exit(0);
     }
   }
 
+  public void setTie(JButton box){
+    box.setBackground(Color.darkGray);
+    box.setForeground(Color.orange);
+    textLabel.setText("Tie!");
+  }
   public void setWinner(JButton box){
     box.setBackground(Color.red);
     box.setForeground(Color.green);
     textLabel.setText(currentPlayer + " Wins!");
   }
 
-  public void exitAlert(String currentPlayer){
+  public void winExitAlert(String currentPlayer){
     JOptionPane.showMessageDialog(null, currentPlayer + " is the winner!", "Press OK to exit", JOptionPane.INFORMATION_MESSAGE);
     System.exit(0);
   }
-
 }
