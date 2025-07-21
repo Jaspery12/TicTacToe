@@ -10,11 +10,14 @@ public class TicTacToe {
   JLabel textLabel = new JLabel();
   JPanel textPanel = new JPanel();
   JPanel boardPanel = new JPanel();
+  JFrame popupFrame = new JFrame();
   
   JButton[][] board = new JButton[3][3];
   String playerX = "X";
   String playerO = "O";
   String currentPlayer = playerX;
+
+  boolean gameOver = false;
 
   public TicTacToe() {
     frame.setVisible(true);
@@ -38,7 +41,7 @@ public class TicTacToe {
     boardPanel.setLayout(new GridLayout(3,3));
     boardPanel.setBackground(Color.gray);
     frame.add(boardPanel);
-
+    
     for(int r=0; r<3; r++){
       for(int c=0; c<3; c++){
         JButton box = new JButton();
@@ -52,15 +55,77 @@ public class TicTacToe {
 
         box.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e){
+            if (gameOver) return;
             JButton box = (JButton) e.getSource(); //Type button as there is only buttons 
-            box.setText(currentPlayer);
+            if (box.getText() == ""){
+              box.setText(currentPlayer);
+              checkWinner();
 
-            currentPlayer = currentPlayer == playerX ? playerO : playerX;
-            textLabel.setText(currentPlayer + "'s turn");
+              if (!gameOver) {
+                currentPlayer = currentPlayer == playerX ? playerO : playerX;  //If currentPlayer is X then set it to O or else X
+                textLabel.setText(currentPlayer + "'s turn");
+              }
+            }
           }
         });
       }
     }
   }
-  
+  public void checkWinner(){
+    for(int r=0; r<3; r++){
+      if (board[r][0].getText() == "") continue;
+      if (board[r][0].getText() == board[r][1].getText() &&
+          board[r][1].getText() == board[r][2].getText()) {
+        for (int i=0; i < 3; i++){
+          setWinner(board[r][i]);
+        }
+        gameOver = true;
+        exitAlert(currentPlayer);
+      }
+    }
+
+    for(int c=0; c<3; c++){
+      if (board[0][c].getText() == "") continue;
+      if (board[0][c].getText() == board[1][c].getText() &&
+          board[1][c].getText() == board[2][c].getText()) {
+        for (int i=0; i < 3; i++){
+          setWinner(board[i][c]);
+        }
+        gameOver = true;
+        exitAlert(currentPlayer);
+      }
+    }
+
+    if (board[0][0].getText() == board[1][1].getText() &&
+        board[1][1].getText() == board[2][2].getText() &&
+        board[0][0].getText() != ""){
+      for (int i=0; i < 3; i++){
+        setWinner(board[i][i]);
+      }
+      gameOver = true;
+      exitAlert(currentPlayer);
+    }
+
+    if (board[0][2].getText() == board[1][1].getText() &&
+        board[1][1].getText() == board[2][0].getText() &&
+        board[0][2].getText() != ""){
+      setWinner(board[0][2]);
+      setWinner(board[1][1]);
+      setWinner(board[2][0]);
+      gameOver = true;
+      exitAlert(currentPlayer);
+    }
+  }
+
+  public void setWinner(JButton box){
+    box.setBackground(Color.red);
+    box.setForeground(Color.green);
+    textLabel.setText(currentPlayer + " Wins!");
+  }
+
+  public void exitAlert(String currentPlayer){
+    JOptionPane.showMessageDialog(null, currentPlayer + " is the winner!", "Press OK to exit", JOptionPane.INFORMATION_MESSAGE);
+    System.exit(0);
+  }
+
 }
